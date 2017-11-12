@@ -1,55 +1,56 @@
 const webpack = require('webpack');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-  devtool: 'inline-source-map',
+  devtool: 'cheap-module-source-map',
   entry: [
     'babel-polyfill',
+    'webpack-hot-middleware/client',
     'react-hot-loader/patch',
-    './src/client.jsx',
+    './src/client',
   ],
+  stats: 'minimal',
   target: 'web',
   module: {
     rules: [{
       test: /\.(js|jsx)$/,
-      use: [
-        'babel-loader',
-        'eslint-loader',
-      ],
-      exclude: /(node_modules|build|public)/,
+      use: [{
+        loader: 'babel-loader',
+      }, {
+        loader: 'eslint-loader',
+      }],
+      exclude: /node_modules/,
     }, {
       test: /\.(css|scss)$/,
-      use: [
-        'style-loader',
-        'css-loader?importLoaders=1',
-        'postcss-loader',
+      use: [{
+        loader: 'style-loader',
+      }, {
+        loader: 'css-loader',
+      }, {
+        loader: 'postcss-loader',
+        options: {
+          includePaths: ['./node_modules'],
+        },
+      },
       ],
-      exclude: /(node_modules|build|public)/,
     }, {
       test: /\.(ico|jpg|jpeg|png|gif|eot|otf|webp|svg|ttf|woff|woff2)(\?.*)?$/,
-      use: 'file-loader',
-      exclude: /(node_modules|build|public)/,
+      use: [{
+        loader: 'file-loader',
+        options: {
+          publicPath: '/public/',
+        },
+      }],
     }],
   },
   plugins: [
-    new HtmlWebpackPlugin({
-      inject: true,
-      template: 'public/index.ejs',
-    }),
     new webpack.NamedModulesPlugin(),
     new webpack.HotModuleReplacementPlugin(),
     new webpack.NoEmitOnErrorsPlugin(),
   ],
-  devServer: {
-    host: 'localhost',
-    port: 3000,
-    historyApiFallback: true,
-    hot: true,
-  },
   output: {
     path: path.join(__dirname, './build'),
-    publicPath: '',
+    publicPath: '/public/',
     filename: 'client.js',
   },
   resolve: {
