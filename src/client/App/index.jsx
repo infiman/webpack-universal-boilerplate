@@ -1,16 +1,20 @@
 import React from 'react';
 import GSAP from 'react-gsap-enhancer';
-import { TweenMax, TimelineMax } from 'gsap';
+import { TimelineMax } from 'gsap';
 
 function createAnim() {
   const box = document.getElementById('box');
 
-  const timelineM = new TimelineMax(box);
-  // TODO: why not chaining, why why why!
-  const tween1 = TweenMax.to(box, 1, { scale: 1.5, y: '+120', yoyo: true });
-  const tween2 = TweenMax.to(box, 1, { scale: 1, y: '-120', yoyo: true });
-  timelineM.repeat(-1);
-  timelineM.add([tween1, tween2], 0.5);
+  // add api is not working for me
+  // however you can sequencing different animation on timelineMax directly
+  const timelineM = new TimelineMax({ repeat: -1 });
+  timelineM.to(box, 1, { scale: 1.23, y: '+120' });
+  timelineM.to(box, 1, { scale: 1, y: '0' });
+  timelineM.to(box, 1, { rotation: 90 }, 1);
+
+  // TODO: https://greensock.com/docs/TimelineMax/add() with multiple tweens it doesn't sequeece
+  // it still happen simultanously
+
   return timelineM;
 }
 
@@ -29,7 +33,7 @@ class App extends React.Component {
     const { x, y } = this.state;
 
     const style = {
-      backgroundColor: 'grey',
+      backgroundColor: 'pink',
       width: 123,
       height: 123,
     };
